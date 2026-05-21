@@ -8,7 +8,10 @@ const envSchema = z.object({
   DATABASE_URL: z
     .string()
     .min(1)
-    .default("mysql://root:root@localhost:3306/task_management")
+    .default("mysql://root:root@localhost:3306/task_management"),
+  JWT_SECRET: z.string().min(1).default("change-me-in-production"),
+  JWT_EXPIRES_IN: z.string().min(1).default("1d"),
+  BCRYPT_SALT_ROUNDS: z.coerce.number().int().min(4).max(15).default(10)
 });
 
 const parsed = envSchema.safeParse(process.env);

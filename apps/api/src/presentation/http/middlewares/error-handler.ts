@@ -18,7 +18,7 @@ export function errorHandler(
   }
 
   if (error instanceof ZodError) {
-    res.status(422).json(
+    res.status(400).json(
       errorResponse(
         "VALIDATION_ERROR",
         "Validation failed",
@@ -33,6 +33,17 @@ export function errorHandler(
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
+      const target = Array.isArray(error.meta?.target)
+        ? error.meta.target.join(",")
+        : String(error.meta?.target ?? "");
+
+      if (target.includes("email")) {
+        res
+          .status(409)
+          .json(errorResponse("EMAIL_ALREADY_REGISTERED", "Email is already registered"));
+        return;
+      }
+
       res.status(409).json(errorResponse("CONFLICT", "Resource already exists"));
       return;
     }

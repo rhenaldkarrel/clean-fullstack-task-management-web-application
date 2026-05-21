@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# local env
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+yarn-debug.log*
+yarn-error.log*
+
+# build outputs
+dist/
+build/
+coverage/
+
+# Vite
+apps/web/.vite/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/

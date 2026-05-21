@@ -1,0 +1,26 @@
+{
+  "name": "simple-todolist-app",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "yarn@1.22.22",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "yarn build:shared && concurrently -n web,api -c blue,green \"yarn workspace @task-app/web dev\" \"yarn workspace @task-app/api dev\"",
+    "dev:web": "yarn build:shared && yarn workspace @task-app/web dev",
+    "dev:api": "yarn build:shared && yarn workspace @task-app/api dev",
+    "build": "yarn build:shared && yarn build:api && yarn build:web",
+    "build:shared": "yarn workspace @task-app/shared build",
+    "build:web": "yarn build:shared && yarn workspace @task-app/web build",
+    "build:api": "yarn build:shared && yarn workspace @task-app/api build",
+    "test": "yarn workspaces run test",
+    "lint": "yarn workspaces run lint",
+    "scripts": "echo \"Available scripts: dev, dev:web, dev:api, build, build:shared, build:web, build:api, test, lint\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.5.4"
+  }
+}

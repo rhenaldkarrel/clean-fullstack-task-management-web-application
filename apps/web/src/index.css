@@ -1,38 +1,36 @@
-:root {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  color: #0f172a;
-  background-color: #f8fafc;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  :root {
+    --background: 220 33% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 214 76% 44%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 213 27% 92%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 214 32% 94%;
+    --muted-foreground: 215 17% 35%;
+    --accent: 213 45% 90%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 214 76% 44%;
+    --radius: 0.5rem;
+  }
 
-body {
-  margin: 0;
-}
+  * {
+    @apply border-border;
+  }
 
-.app-shell {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-}
-
-.card {
-  width: min(560px, 100%);
-  border: 1px solid #dbe4ef;
-  border-radius: 8px;
-  background: #ffffff;
-  padding: 24px;
-}
-
-h1 {
-  margin: 0 0 8px;
-  font-size: 1.5rem;
-}
-
-p {
-  margin: 0;
-  color: #334155;
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "DM Sans", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+  }
 }

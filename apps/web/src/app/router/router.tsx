@@ -4,6 +4,7 @@ import { RegisterPage } from "@/features/auth/pages/register-page";
 import { DashboardPage } from "@/features/tasks/pages/dashboard-page";
 import { AppLayout } from "@/shared/components/layout/app-layout";
 import { ProtectedRoute } from "./protected-route";
+import { PublicOnlyRoute } from "./public-only-route";
 import { NotFoundPage } from "./not-found-page";
 
 export const router = createBrowserRouter([
@@ -12,12 +13,17 @@ export const router = createBrowserRouter([
     element: <Navigate to="/dashboard" replace />
   },
   {
-    path: "/login",
-    element: <LoginPage />
-  },
-  {
-    path: "/register",
-    element: <RegisterPage />
+    element: <PublicOnlyRoute />,
+    children: [
+      {
+        path: "/login",
+        element: <LoginPage />
+      },
+      {
+        path: "/register",
+        element: <RegisterPage />
+      }
+    ]
   },
   {
     element: <ProtectedRoute />,

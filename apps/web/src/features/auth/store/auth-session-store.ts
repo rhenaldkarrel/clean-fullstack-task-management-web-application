@@ -1,8 +1,12 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import type { PublicUser } from "../types/auth-api-types";
 
 type AuthSessionState = {
   accessToken: string | null;
+  currentUser: PublicUser | null;
+  setSession: (params: { accessToken: string; user: PublicUser }) => void;
+  setCurrentUser: (user: PublicUser | null) => void;
   setAccessToken: (token: string) => void;
   clearSession: () => void;
 };
@@ -11,8 +15,12 @@ export const useAuthSessionStore = create<AuthSessionState>()(
   persist(
     (set) => ({
       accessToken: null,
+      currentUser: null,
+      setSession: ({ accessToken, user }) =>
+        set({ accessToken, currentUser: user }),
+      setCurrentUser: (currentUser) => set({ currentUser }),
       setAccessToken: (accessToken) => set({ accessToken }),
-      clearSession: () => set({ accessToken: null })
+      clearSession: () => set({ accessToken: null, currentUser: null })
     }),
     {
       name: "task-app-auth-session",

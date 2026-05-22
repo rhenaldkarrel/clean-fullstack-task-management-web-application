@@ -1,17 +1,20 @@
 import type { PropsWithChildren } from "react";
 import { LayoutDashboard } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/shared/components/ui/button";
 import { useCurrentUserQuery } from "@/features/auth/hooks/use-current-user-query";
 import { useAuthSessionStore } from "@/features/auth/store/auth-session-store";
 
 export function AppLayout({ children }: PropsWithChildren) {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const currentUser = useAuthSessionStore((state) => state.currentUser);
   const clearSession = useAuthSessionStore((state) => state.clearSession);
   useCurrentUserQuery();
 
   function handleLogout() {
+    queryClient.removeQueries();
     clearSession();
     navigate("/login", { replace: true });
   }

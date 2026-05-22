@@ -346,9 +346,9 @@ Keduanya:
 yarn dev
 ```
 
-## Docker Compose (Full Stack - Don't use this method to start local development)
+## Docker Compose (Full Stack)
 
-Catatan penting: `yarn docker:up` sekarang diposisikan untuk start cepat. Script ini tidak memaksa rebuild image setiap kali dijalankan.
+Catatan penting: `yarn docker:up` sekarang diposisikan untuk start cepat. Script ini tidak membangun image sama sekali, jadi tidak akan diam-diam memicu rebuild atau first build.
 
 Compose service:
 
@@ -362,11 +362,20 @@ Run full stack:
 yarn docker:up
 ```
 
+Script ini akan:
+
+- start container dalam mode detached,
+- menampilkan URL localhost yang bisa diklik,
+- menampilkan status container,
+- menampilkan cuplikan log startup terbaru.
+
 Jika ada perubahan code atau Dockerfile yang perlu masuk ke container, pakai:
 
 ```bash
 yarn docker:up:build
 ```
+
+Jalankan script itu sekali pada first run, lalu setelah image sudah ada pakai `yarn docker:up` untuk restart yang cepat.
 
 Atau build image dulu tanpa start container:
 

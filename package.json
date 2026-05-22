@@ -17,7 +17,9 @@
     "build:api": "yarn build:shared && yarn workspace @task-app/api build",
     "test": "yarn workspaces run test",
     "lint": "yarn workspaces run lint",
-    "docker:up": "docker compose up -d --build --wait",
+    "docker:up": "docker compose up -d --wait",
+    "docker:up:build": "docker compose up -d --build --wait",
+    "docker:build": "docker compose build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f --tail=100",
     "db:up": "docker compose up -d --wait mysql",
@@ -27,7 +29,7 @@
     "db:studio": "yarn workspace @task-app/api db:studio",
     "db:seed": "yarn workspace @task-app/api db:seed",
     "db:reset": "yarn workspace @task-app/api db:reset",
-    "scripts": "echo \"Available scripts: dev, dev:web, dev:api, build, build:shared, build:web, build:api, test, lint, docker:up, docker:down, docker:logs, db:up, db:down, db:generate, db:migrate, db:studio, db:seed, db:reset\""
+    "scripts": "echo \"Available scripts: dev, dev:web, dev:api, build, build:shared, build:web, build:api, test, lint, docker:up, docker:up:build, docker:build, docker:down, docker:logs, db:up, db:down, db:generate, db:migrate, db:studio, db:seed, db:reset\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

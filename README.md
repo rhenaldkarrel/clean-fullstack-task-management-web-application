@@ -266,7 +266,7 @@ Semua endpoint task butuh header:
 }
 ```
 
-## Setup (Local Development via Yarn) [Recommended For Starting Project]
+## Setup (Local Development via Yarn - Use this section steps to start local development)
 
 ### Prerequisites
 
@@ -326,7 +326,7 @@ yarn db:seed
 
 Catatan: seed default saat ini no-op (tidak memasukkan data demo).
 
-### Run Development (Don't use this method to start local development)
+### Run Development
 
 Backend:
 
@@ -346,7 +346,9 @@ Keduanya:
 yarn dev
 ```
 
-## Docker Compose (Full Stack)
+## Docker Compose (Full Stack - Don't use this method to start local development)
+
+Catatan penting: `yarn docker:up` sekarang diposisikan untuk start cepat. Script ini tidak memaksa rebuild image setiap kali dijalankan.
 
 Compose service:
 
@@ -358,6 +360,18 @@ Run full stack:
 
 ```bash
 yarn docker:up
+```
+
+Jika ada perubahan code atau Dockerfile yang perlu masuk ke container, pakai:
+
+```bash
+yarn docker:up:build
+```
+
+Atau build image dulu tanpa start container:
+
+```bash
+yarn docker:build
 ```
 
 Stop:

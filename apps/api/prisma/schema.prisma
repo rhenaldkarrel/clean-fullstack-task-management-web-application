@@ -27,16 +27,17 @@ model User {
 }
 
 model Task {
-  id          String     @id @default(cuid())
-  userId      String
-  title       String
-  description String?
-  status      TaskStatus @default(todo)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String     @id @default(cuid())
+  userId          String
+  title           String
+  normalizedTitle String
+  description     String?
+  status          TaskStatus @default(todo)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, title])
+  @@unique([userId, normalizedTitle])
   @@index([userId])
   @@index([status])
   @@index([createdAt])

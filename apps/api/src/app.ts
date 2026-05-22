@@ -4,6 +4,7 @@ import { errorHandler } from './presentation/http/middlewares/error-handler.js';
 import { notFoundHandler } from './presentation/http/middlewares/not-found-handler.js';
 import { authRouter } from './presentation/http/routes/auth-routes.js';
 import { healthRouter } from './presentation/http/routes/health-routes.js';
+import { taskRouter } from './presentation/http/routes/task-routes.js';
 import { env } from './shared/config/env.js';
 
 export function createApp(): Express {
@@ -15,6 +16,7 @@ export function createApp(): Express {
   app.use(express.json());
 
   app.use('/api/auth', authRouter);
+  app.use('/api/tasks', taskRouter);
   app.use('/health', healthRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);

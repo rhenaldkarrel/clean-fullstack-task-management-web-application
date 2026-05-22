@@ -3,25 +3,27 @@ import { AppError } from "../../../shared/errors/app-error.js";
 import { successResponse } from "../../../shared/http/api-response.js";
 import { parseWithZod } from "../../../shared/validation/parse-with-zod.js";
 import {
-  getCurrentUserUseCase,
-  loginUserUseCase,
-  registerUserUseCase
+  getAuthDependencies
 } from "../dependencies/auth-dependencies.js";
 import { loginSchema, registerSchema } from "../schemas/auth-schemas.js";
 
 export async function registerController(req: Request, res: Response): Promise<void> {
+  const { registerUserUseCase } = getAuthDependencies();
   const payload = parseWithZod(registerSchema, req.body);
   const result = await registerUserUseCase.execute(payload);
   res.status(201).json(successResponse(result));
 }
 
 export async function loginController(req: Request, res: Response): Promise<void> {
+  const { loginUserUseCase } = getAuthDependencies();
   const payload = parseWithZod(loginSchema, req.body);
   const result = await loginUserUseCase.execute(payload);
   res.status(200).json(successResponse(result));
 }
 
 export async function meController(req: Request, res: Response): Promise<void> {
+  const { getCurrentUserUseCase } = getAuthDependencies();
+
   if (!req.authUser) {
     throw new AppError({
       statusCode: 401,

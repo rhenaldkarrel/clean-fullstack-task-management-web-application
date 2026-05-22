@@ -209,6 +209,24 @@ describe("task routes integration", () => {
     expect(duplicate.body.error.code).toBe("DUPLICATE_TASK_TITLE");
   });
 
+  it("allows same title for different users", async () => {
+    const user1Token = tokenFor("user-1", "user1@example.com");
+    const user2Token = tokenFor("user-2", "user2@example.com");
+
+    const first = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${user1Token}`)
+      .send({ title: "Weekly Sync" });
+
+    const second = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${user2Token}`)
+      .send({ title: "Weekly Sync" });
+
+    expect(first.status).toBe(201);
+    expect(second.status).toBe(201);
+  });
+
   it("returns correct pagination metadata", async () => {
     const token = tokenFor("user-1", "user1@example.com");
 
@@ -277,6 +295,38 @@ describe("task routes integration", () => {
     expect(filtered.body.data).toHaveLength(1);
     expect(filtered.body.data[0].title).toBe("Monthly Report");
     expect(filtered.body.meta.totalItems).toBe(1);
+  });
+
+  it("returns not found when fetching detail for another user's task", async () => {
+    const ownerToken = tokenFor("user-1", "user1@example.com");
+    const anotherUserToken = tokenFor("user-2", "user2@example.com");
+
+    const created = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${ownerToken}`)
+      .send({ title: "Private Task" });
+
+    const response = await request(app)
+      .get(`/api/tasks/${created.body.data.id as string}`)
+      .set("Authorization", `Bearer ${anotherUserToken}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error.code).toBe("TASK_NOT_FOUND");
+  });
+
+  it("returns validation error when status is invalid", async () => {
+    const token = tokenFor("user-1", "user1@example.com");
+
+    const response = await request(app)
+      .post("/api/tasks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "Invalid Status Task",
+        status: "invalid_status"
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe("VALIDATION_ERROR");
   });
 
   afterEach(() => {

@@ -146,6 +146,26 @@ describe('Task use-cases', () => {
     } satisfies Partial<AppError>);
   });
 
+  it('allows same task title for different users', async () => {
+    const repository = new InMemoryTaskRepository();
+    const useCase = new CreateTaskUseCase(repository);
+
+    const first = await useCase.execute({
+      userId: 'user-1',
+      title: 'Weekly Sync',
+      description: null,
+    });
+    const second = await useCase.execute({
+      userId: 'user-2',
+      title: '  weekly   sync ',
+      description: null,
+    });
+
+    expect(first.id).not.toBe(second.id);
+    expect(first.title).toBe('Weekly Sync');
+    expect(second.title).toBe('weekly sync');
+  });
+
   it('list tasks supports pagination, search, and filter', async () => {
     const repository = new InMemoryTaskRepository();
     const createTaskUseCase = new CreateTaskUseCase(repository);

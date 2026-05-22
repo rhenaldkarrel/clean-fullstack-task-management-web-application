@@ -21,6 +21,49 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: task-app-api
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      CORS_ORIGIN: http://localhost:5173
+      DATABASE_URL: mysql://task_user:task_password@mysql:3306/task_management
+      DATABASE_URL_TEST: mysql://task_user:task_password@mysql:3306/task_management_test
+      JWT_SECRET: change-me-in-production
+      JWT_EXPIRES_IN: 1d
+      BCRYPT_ROUNDS: 10
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:4000/health').then((res)=>process.exit(res.ok?0:1)).catch(()=>process.exit(1))
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:4000/api
+    container_name: task-app-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "5173:5173"
 
 volumes:
   mysql_data:

@@ -7,7 +7,6 @@ type AuthSessionState = {
   currentUser: PublicUser | null;
   setSession: (params: { accessToken: string; user: PublicUser }) => void;
   setCurrentUser: (user: PublicUser | null) => void;
-  setAccessToken: (token: string) => void;
   clearSession: () => void;
 };
 
@@ -19,7 +18,6 @@ export const useAuthSessionStore = create<AuthSessionState>()(
       setSession: ({ accessToken, user }) =>
         set({ accessToken, currentUser: user }),
       setCurrentUser: (currentUser) => set({ currentUser }),
-      setAccessToken: (accessToken) => set({ accessToken }),
       clearSession: () => set({ accessToken: null, currentUser: null })
     }),
     {

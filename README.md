@@ -5,12 +5,14 @@ Aplikasi fullstack task management berbasis monorepo untuk technical test Fullst
 ## Features
 
 ### Authentication
+
 - Register user
 - Login user
 - Get current user (`/api/auth/me`)
 - JWT access token auth
 
 ### Task Management
+
 - Create, list, detail, update, delete task
 - Task scoped per authenticated user
 - Duplicate title prevention per user (case-insensitive + whitespace-insensitive)
@@ -19,6 +21,7 @@ Aplikasi fullstack task management berbasis monorepo untuk technical test Fullst
 - Page-based pagination
 
 ### Frontend Dashboard
+
 - Stats cards (Total, Todo, In Progress, Done, Canceled)
 - Search + filter toolbar
 - Paginated task list (desktop table + mobile cards)
@@ -29,6 +32,7 @@ Aplikasi fullstack task management berbasis monorepo untuk technical test Fullst
 ## Tech Stack
 
 ### Backend
+
 - Express.js
 - TypeScript
 - Prisma ORM
@@ -39,6 +43,7 @@ Aplikasi fullstack task management berbasis monorepo untuk technical test Fullst
 - Vitest + Supertest
 
 ### Frontend
+
 - React + Vite + TypeScript
 - React Router
 - TanStack Query
@@ -47,11 +52,13 @@ Aplikasi fullstack task management berbasis monorepo untuk technical test Fullst
 - Tailwind CSS + shadcn/ui style primitives
 
 ### Monorepo
+
 - Yarn Workspaces (classic)
 
 ## Architecture Overview
 
 Project memakai lightweight clean architecture:
+
 - Domain logic terpisah dari HTTP layer.
 - Use-case berada di application layer.
 - Prisma implementation berada di infrastructure layer.
@@ -122,12 +129,14 @@ src
 ```
 
 Prinsip state:
+
 - TanStack Query: server state (fetch/mutation/invalidation).
 - Zustand: UI-only state (drawer state, selected task).
 
 ## Database Schema Overview
 
 ### User
+
 - `id` (PK)
 - `name`
 - `email` (unique)
@@ -136,6 +145,7 @@ Prinsip state:
 - `updatedAt`
 
 ### Task
+
 - `id` (PK)
 - `userId` (FK -> User)
 - `title`
@@ -146,6 +156,7 @@ Prinsip state:
 - `updatedAt`
 
 ### Constraints & Indexes
+
 - Unique: `users.email`
 - Unique: `(tasks.userId, tasks.normalizedTitle)`
 - Index: `tasks.userId`
@@ -160,6 +171,7 @@ Base URL default: `http://localhost:4000`
 ### Auth Endpoints
 
 #### `POST /api/auth/register`
+
 - Body:
   ```json
   {
@@ -171,6 +183,7 @@ Base URL default: `http://localhost:4000`
 - Response: `201`
 
 #### `POST /api/auth/login`
+
 - Body:
   ```json
   {
@@ -181,15 +194,18 @@ Base URL default: `http://localhost:4000`
 - Response: `200`
 
 #### `GET /api/auth/me`
+
 - Header: `Authorization: Bearer <access_token>`
 - Response: `200`
 
 ### Task Endpoints
 
 Semua endpoint task butuh header:
+
 - `Authorization: Bearer <access_token>`
 
 #### `POST /api/tasks`
+
 - Body:
   ```json
   {
@@ -201,6 +217,7 @@ Semua endpoint task butuh header:
 - Response: `201`
 
 #### `GET /api/tasks?page=1&limit=10&search=report&status=done`
+
 - Response: `200`
 - Format:
   ```json
@@ -218,9 +235,11 @@ Semua endpoint task butuh header:
   ```
 
 #### `GET /api/tasks/:id`
+
 - Response: `200`
 
 #### `PATCH /api/tasks/:id`
+
 - Body (minimal satu field):
   ```json
   {
@@ -232,6 +251,7 @@ Semua endpoint task butuh header:
 - Response: `200`
 
 #### `DELETE /api/tasks/:id`
+
 - Response: `204`
 
 ### Error Response Format
@@ -246,9 +266,10 @@ Semua endpoint task butuh header:
 }
 ```
 
-## Setup (Local Development via Yarn)
+## Setup (Local Development via Yarn) [Recommended For Starting Project]
 
 ### Prerequisites
+
 - Node.js `>=20`
 - Yarn classic `1.22.x`
 - Docker Desktop (untuk MySQL lokal)
@@ -260,6 +281,8 @@ cp apps/api/.env.example apps/api/.env
 cp apps/api/.env.test.example apps/api/.env.test
 cp apps/web/.env.example apps/web/.env
 ```
+
+Jika file `.env` lama belum punya `SHADOW_DATABASE_URL`, script Prisma local tetap fallback ke konfigurasi Docker MySQL default repo ini.
 
 ### Install Dependencies
 
@@ -273,11 +296,26 @@ yarn install
 yarn db:up
 ```
 
+Script ini menunggu container MySQL sampai status `healthy`, jadi aman langsung lanjut ke langkah Prisma berikutnya.
+
 ### Generate Prisma Client + Run Migration
 
 ```bash
 yarn db:generate
 yarn db:migrate
+```
+
+Local development memakai shadow database Prisma yang ikut dibuat oleh init script Docker:
+
+- `task_management`
+- `task_management_test`
+- `task_management_shadow`
+
+Jika volume MySQL lokal sudah dibuat sebelum konfigurasi ini ada, hapus volume sekali agar init script terbaru ikut dijalankan:
+
+```bash
+docker compose down -v
+yarn db:up
 ```
 
 ### Optional Seed
@@ -288,19 +326,22 @@ yarn db:seed
 
 Catatan: seed default saat ini no-op (tidak memasukkan data demo).
 
-### Run Development
+### Run Development (Don't use this method to start local development)
 
 Backend:
+
 ```bash
 yarn dev:api
 ```
 
 Frontend:
+
 ```bash
 yarn dev:web
 ```
 
 Keduanya:
+
 ```bash
 yarn dev
 ```
@@ -308,47 +349,56 @@ yarn dev
 ## Docker Compose (Full Stack)
 
 Compose service:
+
 - `mysql`
 - `api`
 - `web`
 
 Run full stack:
+
 ```bash
 yarn docker:up
 ```
 
 Stop:
+
 ```bash
 yarn docker:down
 ```
 
 Logs:
+
 ```bash
 yarn docker:logs
 ```
 
 Akses:
+
 - Web: `http://localhost:5173`
 - API: `http://localhost:4000`
 - MySQL: `localhost:3306`
 
 Catatan:
+
 - Container API menjalankan `prisma migrate deploy` saat start.
 - Volume MySQL persisten: `mysql_data`.
 
 ## Testing
 
 Run backend tests:
+
 ```bash
 yarn workspace @task-app/api test
 ```
 
 Run all workspace tests:
+
 ```bash
 yarn test
 ```
 
 Detail testing strategy ada di:
+
 - [`apps/api/TESTING.md`](apps/api/TESTING.md)
 
 ## Build
@@ -358,6 +408,7 @@ yarn build
 ```
 
 Atau per app:
+
 ```bash
 yarn build:api
 yarn build:web
@@ -390,21 +441,25 @@ yarn build:web
 ## Optional Deployment Notes
 
 ### Suggested Targets
+
 - Frontend: Vercel
 - Backend: Render / Railway / Fly.io
 - Database: Railway MySQL / Aiven MySQL / PlanetScale-compatible MySQL
 
 ### Required Environment Variables (Backend)
+
 - `NODE_ENV`
 - `PORT`
 - `CORS_ORIGIN`
 - `DATABASE_URL`
+- `SHADOW_DATABASE_URL` (dibutuhkan untuk `prisma migrate dev` di local development)
 - `DATABASE_URL_TEST` (optional, mainly for testing)
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
 - `BCRYPT_ROUNDS`
 
 ### Required Environment Variables (Frontend)
+
 - `VITE_API_BASE_URL`
 
 ## Submission Notes

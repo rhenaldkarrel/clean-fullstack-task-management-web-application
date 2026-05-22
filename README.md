@@ -1,104 +1,116 @@
 # Task Management Application
 
-Phase saat ini: **Phase 2 - Backend Foundation**.
-
-## Tech Stack (Current)
-
-- Yarn workspace (monorepo)
+Monorepo task management app dengan:
 - `apps/web`: React + Vite + TypeScript
 - `apps/api`: Express + TypeScript + Prisma + MySQL + Zod
-- `packages/shared`: shared TypeScript package
+- `packages/shared`: shared package
 
 ## Prerequisites
 
 - Node.js `>=20`
 - Yarn classic `1.22.x`
+- Docker Desktop (untuk MySQL lokal)
 
-## Setup
+## Setup Awal
 
 ```bash
 yarn install
-```
-
-Backend environment:
-
-```bash
 cp apps/api/.env.example apps/api/.env
 ```
 
-## Menjalankan Development
+## Environment Backend (`apps/api/.env`)
 
-Jalankan frontend saja:
+Key utama:
+
+- `NODE_ENV=development`
+- `PORT=4000`
+- `CORS_ORIGIN=http://localhost:5173`
+- `DATABASE_URL="mysql://task_user:task_password@localhost:3306/task_management"`
+- `DATABASE_URL_TEST="mysql://task_user:task_password@localhost:3306/task_management_test"`
+- `JWT_SECRET="change-me-in-production"`
+- `JWT_EXPIRES_IN=1d`
+- `BCRYPT_ROUNDS=10`
+
+Catatan: `BCRYPT_SALT_ROUNDS` masih didukung sebagai alias backward-compatible.
+
+## Local Database Setup (Phase 2.5)
+
+Start MySQL via Docker Compose:
 
 ```bash
-yarn dev:web
+yarn db:up
 ```
 
-Jalankan backend saja:
+Service ini akan membuat database:
+- `task_management`
+- `task_management_test`
+
+Stop service:
+
+```bash
+yarn db:down
+```
+
+## Prisma / DB Scripts
+
+Jalankan dari root repo:
+
+```bash
+yarn db:generate
+yarn db:migrate
+yarn db:studio
+yarn db:seed
+yarn db:reset
+```
+
+Catatan:
+- `db:reset` bersifat destruktif (drop + recreate schema). Hanya untuk local development.
+
+## Menjalankan Development
+
+Backend saja:
 
 ```bash
 yarn dev:api
 ```
 
-Jalankan frontend + backend bersamaan:
+Frontend saja:
+
+```bash
+yarn dev:web
+```
+
+Keduanya:
 
 ```bash
 yarn dev
 ```
 
-Backend health check:
+Health check backend:
 
-- URL: `http://localhost:4000/health`
-- Expected response: status `200` dengan response format standar `{ data: ... }`.
+- `GET http://localhost:4000/health`
 
-## Prisma Commands
+## Manual Auth Test (curl)
 
-Validasi schema:
-
-```bash
-yarn workspace @task-app/api prisma:validate
-```
-
-Generate Prisma client:
+Register:
 
 ```bash
-yarn workspace @task-app/api prisma:generate
+curl -i -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Demo User","email":"demo@example.com","password":"password123"}'
 ```
 
-Buat dan jalankan migration di local:
+Login:
 
 ```bash
-yarn workspace @task-app/api prisma:migrate:dev --name init_foundation
+curl -i -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"demo@example.com","password":"password123"}'
 ```
 
-Jalankan migration untuk environment deploy:
+Test endpoint terproteksi (`/api/auth/me`):
 
 ```bash
-yarn workspace @task-app/api prisma:migrate:deploy
+curl -i http://localhost:4000/api/auth/me \
+  -H "Authorization: Bearer <ACCESS_TOKEN>"
 ```
-
-Seed strategy saat ini:
-
-```bash
-yarn workspace @task-app/api prisma:seed
-```
-
-Script seed default sengaja no-op (tidak membuat data), supaya tetap ringan dan bisa diisi saat phase feature.
-
-## Build
-
-```bash
-yarn build
-```
-
-Atau per app:
-
-```bash
-yarn build:web
-yarn build:api
-```
-
-## Catatan Scope Saat Ini
-
-- Fondasi backend clean architecture ringan sudah disiapkan (`domain`, `application`, `infrastructure`, `presentation`, `shared`).
-- Fitur auth dan task business logic penuh belum diimplementasikan. Itu akan masuk pada phase berikutnya.

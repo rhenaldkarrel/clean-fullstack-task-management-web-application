@@ -4,7 +4,7 @@ import { env } from "../../shared/config/env.js";
 
 export class BcryptPasswordHasher implements PasswordHasher {
   async hash(plainTextPassword: string): Promise<string> {
-    return bcrypt.hash(plainTextPassword, env.BCRYPT_SALT_ROUNDS);
+    return bcrypt.hash(plainTextPassword, env.BCRYPT_ROUNDS);
   }
 
   async compare(
